@@ -1,5 +1,11 @@
 (in-package #:post-tonal)
 
+(export '(pitch-class int-value pitch-class-mod pitch-class-from-other
+          defpitch-class pitch-class-transpose pitch-class-invert
+          pitch-class-ord-interval pitch-class-unord-interval
+          pitch-class-12 dyn-pitch-class pitch pitch-ord-interval
+          pitch-unord-interval))
+
 (defclass pitch-class ()
   ((int-value :initarg :int-value
               :reader int-value
@@ -70,6 +76,15 @@
 (defmethod pitch-class-from-other ((p pitch) n)
   (make-instance 'pitch :pitch-class (pitch-class-from-other (pitch-class p) n)
                  :octave (pitch-octave p)))
+
+(defun pitch-transpose (p n)
+  (let ((pc (pitch-class-transpose (pitch-class p) n))
+        (oct-diff (truncate n (pitch-class-mod p))))
+    (make-instance 'pitch :pitch-class pc
+                   :octave (+ (pitch-octave p) oct-diff))))
+
+(defun pitch-invert (p)
+  (pitch-class-invert p))
 
 (defun pitch-ord-interval (pc1 pc2)
   (+ (* (pitch-class-mod pc1)
